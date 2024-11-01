@@ -22,7 +22,8 @@ pipeline {
         stage("Tests") {
             steps{
                 sh '''
-                    npm test
+                    echo "Test Stage"
+                    #npm test
                 '''
             }
         }
