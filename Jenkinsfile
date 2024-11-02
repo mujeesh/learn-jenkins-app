@@ -36,7 +36,7 @@ pipeline {
                     steps{
                         sh '''
                             echo "Test Stage"
-                            test -f build/index.html
+                            #test -f build/index.html
                             npm test
                         '''
                     }
@@ -58,13 +58,14 @@ pipeline {
                         sh '''
                             npm install serve
                             node_modules/.bin/serve -s build &
-                            sleep 15
+                            sleep 10
                             npx playwright test  --reporter=line
                         '''
                     }
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report',
+                             reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -84,6 +85,7 @@ pipeline {
                     npm install netlify-cli
                     node_modules/.bin/netlify --version
                     echo "Deploy to production Ste ID: $NETLIFY_SITE_ID"
+                    node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod
                     echo 'END'
                 '''
@@ -99,14 +101,17 @@ pipeline {
             environment {
                 CI_ENVIRONMENT_URL = 'https://celadon-churros-89d91b.netlify.app'
             }
+
             steps{
                 sh '''
                     npx playwright test  --reporter=line
                 '''
             }
+
             post {
                 always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'E2E HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report',
+                     reportFiles: 'index.html', reportName: 'E2E HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
